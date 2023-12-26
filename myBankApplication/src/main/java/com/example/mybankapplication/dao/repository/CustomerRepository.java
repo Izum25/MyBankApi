@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface CustomerRepository extends JpaRepository<CustomerEntity, Integer> {
+public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
     List<CustomerEntity> findByFirstNameAndLastName(String fistName, String lastName);
 
     List<CustomerEntity> findByLastName(String lastName);
@@ -18,4 +18,5 @@ public interface CustomerRepository extends JpaRepository<CustomerEntity, Intege
     List<CustomerEntity> findByBirthDate(LocalDate birthDate);
 
     List<CustomerEntity> findAll(Specification<CustomerEntity> specifications, Pageable pageable);
+
 }

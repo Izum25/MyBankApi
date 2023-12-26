@@ -1,7 +1,7 @@
 package com.example.mybankapplication.specifications;
 
 import com.example.mybankapplication.dao.CustomerEntity;
-import com.example.mybankapplication.model.CustomerFilterDto;
+import com.example.mybankapplication.model.customers.CustomerFilterDto;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
