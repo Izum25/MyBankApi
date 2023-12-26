@@ -1,6 +1,5 @@
 package com.example.mybankapplication.model;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +16,4 @@ public class PassportDto {
     private LocalDate birthDate;
     private String personalNumber;
     private LocalDate expiredDate;
-//    private String patronymic;
-//    private String sex;
-//    private String nationality;
-//    private CustomerDto customer;
 }

@@ -4,18 +4,12 @@ import com.example.mybankapplication.dao.CustomerEntity;
 import com.example.mybankapplication.dao.repository.CustomerRepository;
 import com.example.mybankapplication.exception.NotFoundException;
 import com.example.mybankapplication.mapper.CustomerMapper;
-import com.example.mybankapplication.model.CustomerDto;
-import com.example.mybankapplication.model.CustomerFilterDto;
-import com.example.mybankapplication.specifications.CustomerSpecifications;
+import com.example.mybankapplication.model.customers.CustomerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,76 +52,101 @@ public class CustomerService {
 //        }
 //    }
 
-    public Page<CustomerDto> getCustomers(CustomerFilterDto customerFilterDto, Pageable pageable) {
-
-        var specifications = new CustomerSpecifications().getCustomerSpecification(customerFilterDto);
-
-
-        Page<CustomerEntity> customerEntityPage = (Page<CustomerEntity>) customerRepository
-                .findAll(specifications, pageable);
-
-        return customerEntityPage.map(customerMapper::mapToDto);
-    }
-
-    public List<CustomerDto> getCustomersByName(String firstName, String lastName) {
-        log.info("Action.getCustomerByName start");
-        List<CustomerEntity> customerEntities;
-
-        if (firstName == null) customerEntities = customerRepository.findByLastName(lastName);
-        else if (lastName == null) customerEntities = customerRepository.findByFirstName(firstName);
-        else customerEntities = customerRepository.findByFirstNameAndLastName(firstName, lastName);
-
-        if (customerEntities.isEmpty()) {
-            log.error("Customer " + firstName + " " + lastName + " not found.");
-            throw new RuntimeException("Customer " + firstName + " " + lastName + " not found.");
-        } else {
-            log.info("Action.getCustomerByName end");
-            return customerEntities.stream().map(customerMapper::mapToDto)
-                    .collect(Collectors.toList());
-        }
-    }
-//    public List<CustomerDto> getCustomerByFirstName(){
-//                return customerRepository.findAll(fistName);
+//    public Page<CustomerDto> getCustomers(CustomerFilterDto customerFilterDto, Pageable pageable) {
+//
+//        var specifications = new CustomerSpecifications().getCustomerSpecification(customerFilterDto);
+//
+//
+//        Page<CustomerEntity> customerEntityPage = (Page<CustomerEntity>) customerRepository
+//                .findAll(specifications, pageable);
+//
+//        return customerEntityPage.map(customerMapper::mapToDto);
+//    }
+//
+//    public List<CustomerDto> getCustomersByName(String firstName, String lastName) {
+//        log.info("Action.getCustomerByName start");
+//        List<CustomerEntity> customerEntities;
+//
+//        if (firstName == null) customerEntities = customerRepository.findByLastName(lastName);
+//        else if (lastName == null) customerEntities = customerRepository.findByFirstName(firstName);
+//        else customerEntities = customerRepository.findByFirstNameAndLastName(firstName, lastName);
+//
+//        if (customerEntities.isEmpty()) {
+//            log.error("Customer " + firstName + " " + lastName + " not found.");
+//            throw new RuntimeException("Customer " + firstName + " " + lastName + " not found.");
+//        } else {
+//            log.info("Action.getCustomerByName end");
+//            return customerEntities.stream().map(customerMapper::mapToDto)
+//                    .collect(Collectors.toList());
+//        }
+//    }
+//
+//    public CustomerDto getCustomerById(Long customerId) {
+//        log.info("Action.getCustomer start.");
+//        CustomerEntity customerEntity = customerRepository.findById(customerId)
+//                .orElseThrow(() -> {
+//                    log.error("Customer not found with id {}", customerId);
+//                    return new NotFoundException("Customer not found with id " + customerId);
+//                });
+//        return customerMapper.mapToDto(customerEntity);
+//    }
+//
+//    public void addCustomer(CustomerDto addCustomerDto) {
+//        log.info("Action.addCustomer start.");
+//        customerRepository.save(
+//                customerMapper.mapToEntity(addCustomerDto));
+//        log.info("Action.addCustomer end.");
 //    }
 
-    public CustomerDto getCustomer(Integer customerId) {
-        log.info("Action.getCustomer start.");
-        CustomerEntity customerEntity = customerRepository.findById(customerId)
-                .orElseThrow(() -> {
-                    log.error("Customer not found with id {}", customerId);
-                    return new NotFoundException("Customer not found with id " + customerId);
-                });
-        return customerMapper.mapToDto(customerEntity);
-    }
-
-    public void addCustomer(CustomerDto addCustomerDto) {
-        log.info("Action.addCustomer start.");
-        customerRepository.save(
-                customerMapper.mapToEntity(addCustomerDto));
-        log.info("Action.addCustomer end.");
-    }
-
-    public void updateCustomer(Integer customerId, CustomerDto updateCustomerDto) {
-        log.info("Action.updateCustomer start.");
-        if (customerRepository.findById(customerId).isPresent()) {
-            customerRepository.save(
-                    customerMapper.mapToEntity(updateCustomerDto)
-            );
-            log.info("Action.updateCustomer end.");
-        } else {
-            log.error("Customer not found with id {}", customerId);
-            throw new RuntimeException("Customer not found with id " + customerId);
+    protected void verifyId(Long id) throws NotFoundException {
+        log.debug("Verifying customer by ID: {}", id);
+        if (!customerRepository.existsById(id)) {
+            log.error("Customer with ID {} not found", id);
+            throw new NotFoundException("Customer with ID " + id + " not found");
         }
     }
 
-    public void deleteCustomer(Integer customerId) {
-        log.info("Action.deleteCustomer start.");
-        if (customerRepository.existsById(customerId)) {
-            customerRepository.deleteById(customerId);
-            log.info("Action.deleteCustomer end.");
-        } else {
-            log.error("Customer not found with id {}", customerId);
-            throw new RuntimeException("Customer not found with id " + customerId);
+    public List<CustomerDto> getAllCustomer() {
+        log.debug("Retrieving information about all customers");
+        List<CustomerEntity> customerEntityList = customerRepository.findAll();
+
+        List<CustomerDto> customerDtoList = customerEntityList.stream()
+                .map(customerMapper::mapToDto)
+                .toList();
+        log.info("Successfully retrieved all customers");
+        return customerDtoList;
+    }
+
+    public CustomerDto getCustomerById(Long id) {
+        log.debug("Retrieving information for customer with ID: {}", id);
+        verifyId(id);
+        CustomerEntity customerEntity = customerRepository.findById(id).get();
+        CustomerDto customerDto = customerMapper.mapToDto(customerEntity);
+        log.info("Successfully retrieved customer with ID: {}", id);
+        return customerDto;
+    }
+
+    public void updateCustomer(Long customerId, CustomerDto customer) {
+        log.debug("Updating customer with ID: {} to {}", customerId, customer);
+        verifyId(customerId);
+        for (CustomerDto c : getAllCustomer()) {
+            if (c.getId().equals(customerId)) {
+                customerRepository.save(customerMapper.mapToEntity(customer));
+                log.info("Customer updated successfully");
+            }
         }
+    }
+
+    public void deleteCustomerById(Long id) {
+        log.debug("Deleting customer with ID: {}", id);
+        verifyId(id);
+        customerRepository.deleteById(id);
+        log.info("Successfully deleted customer with ID: {}", id);
+    }
+
+    public void addCustomerDto(CustomerDto customer) {
+        log.debug("Adding customer: {}", customer);
+        customerRepository.save(customerMapper.mapToEntity(customer));
+        log.info("Successfully added customer");
     }
 }
