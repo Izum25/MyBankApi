@@ -2,7 +2,8 @@ package com.example.mybankapplication.service;
 
 import com.example.mybankapplication.dao.AccountEntity;
 import com.example.mybankapplication.dao.repository.AccountRepository;
-import com.example.mybankapplication.exception.NotFoundException;
+import com.example.mybankapplication.exception.DataAlreadyExistsException;
+import com.example.mybankapplication.exception.NotDataFoundException;
 import com.example.mybankapplication.mapper.AccountMapper;
 import com.example.mybankapplication.mapper.CustomerMapper;
 import com.example.mybankapplication.model.accounts.AccountDto;
@@ -24,13 +25,16 @@ public class AccountService {
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
 
-    protected void verifyId(Long id) throws NotFoundException {
+    protected boolean verifyId(Long id) throws NotDataFoundException {
         log.debug("Verifying account by ID: {}", id);
         if (!accountRepository.existsById(id)) {
             log.error("Account with ID {} not found", id);
-            throw new NotFoundException("Account with ID " + id + " not found");
+            throw new NotDataFoundException("Account with ID " + id + " not found");
         }
+        return true;
     }
+
+    //verifyDataAlreadyExists
 
     public List<AccountDto> getAllAccounts() {
         log.debug("Retrieving all accounts");
@@ -77,6 +81,11 @@ public class AccountService {
     public void createAccount(AccountDto account, Long customerId) {
         log.debug("Creating account for customer: {}", customerId);
         customerService.verifyId(customerId);
+
+        if(verifyId(customerId)){
+            log.error("Account with ID {} is already exists", account.getId());
+            throw new DataAlreadyExistsException("Account with ID is already exists");
+        }
 
         AccountEntity accountEntity = accountMapper.mapToEntity(account);
         accountEntity.setCustomer(

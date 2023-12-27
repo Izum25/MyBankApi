@@ -1,4 +1,4 @@
-package com.example.mybankapplication.model.enums;
+package com.example.mybankapplication.enumeration;
 
 public enum AccountType {
     CURRENT,
