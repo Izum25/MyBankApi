@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-12-27T00:08:07+0400",
+    date = "2023-12-27T13:24:34+0400",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.5.jar, environment: Java 17.0.7 (Oracle Corporation)"
 )
 @Component
@@ -44,7 +44,9 @@ public class AccountMapperImpl implements AccountMapper {
         accountDto.setBranchCode( accountEntity.getBranchCode() );
         accountDto.setAccountNumber( accountEntity.getAccountNumber() );
         accountDto.setAccountOpenDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( accountEntity.getAccountOpenDate() ) ) );
+        accountDto.setAccountExpireDate( accountEntity.getAccountExpireDate() );
         accountDto.setIban( accountEntity.getIban() );
+        accountDto.setSwift( accountEntity.getSwift() );
         accountDto.setCurrency( accountEntity.getCurrency() );
         accountDto.setAccountType( accountEntity.getAccountType() );
         accountDto.setStatus( accountEntity.getStatus() );
@@ -68,7 +70,9 @@ public class AccountMapperImpl implements AccountMapper {
         accountEntity.setBranchCode( accountDto.getBranchCode() );
         accountEntity.setAccountNumber( accountDto.getAccountNumber() );
         accountEntity.setAccountOpenDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( accountDto.getAccountOpenDate() ) ) );
+        accountEntity.setAccountExpireDate( accountDto.getAccountExpireDate() );
         accountEntity.setIban( accountDto.getIban() );
+        accountEntity.setSwift( accountDto.getSwift() );
         accountEntity.setCurrency( accountDto.getCurrency() );
         accountEntity.setAccountType( accountDto.getAccountType() );
         accountEntity.setStatus( accountDto.getStatus() );

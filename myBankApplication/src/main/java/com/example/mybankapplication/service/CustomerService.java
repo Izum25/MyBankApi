@@ -2,7 +2,8 @@ package com.example.mybankapplication.service;
 
 import com.example.mybankapplication.dao.CustomerEntity;
 import com.example.mybankapplication.dao.repository.CustomerRepository;
-import com.example.mybankapplication.exception.NotFoundException;
+import com.example.mybankapplication.exception.DataAlreadyExistsException;
+import com.example.mybankapplication.exception.NotDataFoundException;
 import com.example.mybankapplication.mapper.CustomerMapper;
 import com.example.mybankapplication.model.customers.CustomerDto;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +91,7 @@ public class CustomerService {
 //                });
 //        return customerMapper.mapToDto(customerEntity);
 //    }
-//
+
 //    public void addCustomer(CustomerDto addCustomerDto) {
 //        log.info("Action.addCustomer start.");
 //        customerRepository.save(
@@ -98,12 +99,13 @@ public class CustomerService {
 //        log.info("Action.addCustomer end.");
 //    }
 
-    protected void verifyId(Long id) throws NotFoundException {
+    protected boolean verifyId(Long id) throws NotDataFoundException {
         log.debug("Verifying customer by ID: {}", id);
         if (!customerRepository.existsById(id)) {
             log.error("Customer with ID {} not found", id);
-            throw new NotFoundException("Customer with ID " + id + " not found");
+            throw new NotDataFoundException("Customer with ID " + id + " not found");
         }
+        return true;
     }
 
     public List<CustomerDto> getAllCustomer() {
@@ -146,6 +148,10 @@ public class CustomerService {
 
     public void addCustomerDto(CustomerDto customer) {
         log.debug("Adding customer: {}", customer);
+        if (verifyId(customer.getId())){
+            log.error("Customer with ID {} is already exists", customer.getId());
+            throw new DataAlreadyExistsException("Customer with ID is already exists");
+        }
         customerRepository.save(customerMapper.mapToEntity(customer));
         log.info("Successfully added customer");
     }

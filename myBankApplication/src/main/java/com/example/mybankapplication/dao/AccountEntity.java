@@ -1,8 +1,8 @@
 // AccountEntity.java
 package com.example.mybankapplication.dao;
 
-import com.example.mybankapplication.model.enums.AccountStatus;
-import com.example.mybankapplication.model.enums.AccountType;
+import com.example.mybankapplication.enumeration.AccountStatus;
+import com.example.mybankapplication.enumeration.AccountType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;

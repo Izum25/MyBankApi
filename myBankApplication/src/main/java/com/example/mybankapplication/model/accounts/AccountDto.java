@@ -1,8 +1,8 @@
 package com.example.mybankapplication.model.accounts;
 
 import com.example.mybankapplication.dao.CustomerEntity;
-import com.example.mybankapplication.model.enums.AccountStatus;
-import com.example.mybankapplication.model.enums.AccountType;
+import com.example.mybankapplication.enumeration.AccountStatus;
+import com.example.mybankapplication.enumeration.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
