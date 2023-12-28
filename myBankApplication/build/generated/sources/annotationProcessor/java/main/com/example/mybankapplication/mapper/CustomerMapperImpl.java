@@ -1,11 +1,12 @@
 package com.example.mybankapplication.mapper;
 
-import com.example.mybankapplication.dao.AccountEntity;
-import com.example.mybankapplication.dao.CustomerEntity;
-import com.example.mybankapplication.dao.PassportEntity;
+import com.example.mybankapplication.entities.AccountEntity;
+import com.example.mybankapplication.entities.CustomerEntity;
+import com.example.mybankapplication.entities.PassportEntity;
 import com.example.mybankapplication.model.PassportDto;
 import com.example.mybankapplication.model.accounts.AccountDto;
 import com.example.mybankapplication.model.customers.CustomerDto;
+import com.example.mybankapplication.model.customers.CustomerFilterDto;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-12-27T13:24:34+0400",
+    date = "2023-12-28T14:35:52+0400",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.5.jar, environment: Java 17.0.7 (Oracle Corporation)"
 )
 @Component
@@ -52,6 +53,8 @@ public class CustomerMapperImpl implements CustomerMapper {
         customerDto.setLastName( customerEntity.getLastName() );
         customerDto.setBirthDate( customerEntity.getBirthDate() );
         customerDto.setEmail( customerEntity.getEmail() );
+        customerDto.setCif( customerEntity.getCif() );
+        customerDto.setPhoneNumber( customerEntity.getPhoneNumber() );
         customerDto.setAccounts( accountEntityListToAccountDtoList( customerEntity.getAccounts() ) );
 
         return customerDto;
@@ -63,17 +66,37 @@ public class CustomerMapperImpl implements CustomerMapper {
             return null;
         }
 
-        CustomerEntity customerEntity = new CustomerEntity();
+        CustomerEntity.CustomerEntityBuilder customerEntity = CustomerEntity.builder();
 
-        customerEntity.setId( customerDto.getId() );
-        customerEntity.setFirstName( customerDto.getFirstName() );
-        customerEntity.setLastName( customerDto.getLastName() );
-        customerEntity.setBirthDate( customerDto.getBirthDate() );
-        customerEntity.setEmail( customerDto.getEmail() );
-        customerEntity.setPassport( passportDtoToPassportEntity( customerDto.getPassport() ) );
-        customerEntity.setAccounts( accountDtoListToAccountEntityList( customerDto.getAccounts() ) );
+        customerEntity.id( customerDto.getId() );
+        customerEntity.firstName( customerDto.getFirstName() );
+        customerEntity.lastName( customerDto.getLastName() );
+        customerEntity.birthDate( customerDto.getBirthDate() );
+        customerEntity.email( customerDto.getEmail() );
+        customerEntity.cif( customerDto.getCif() );
+        customerEntity.phoneNumber( customerDto.getPhoneNumber() );
+        customerEntity.passport( passportDtoToPassportEntity( customerDto.getPassport() ) );
+        customerEntity.accounts( accountDtoListToAccountEntityList( customerDto.getAccounts() ) );
 
-        return customerEntity;
+        return customerEntity.build();
+    }
+
+    @Override
+    public CustomerFilterDto mapToFilterDto(CustomerEntity customerEntity) {
+        if ( customerEntity == null ) {
+            return null;
+        }
+
+        CustomerFilterDto.CustomerFilterDtoBuilder customerFilterDto = CustomerFilterDto.builder();
+
+        customerFilterDto.firstName( customerEntity.getFirstName() );
+        customerFilterDto.lastName( customerEntity.getLastName() );
+        customerFilterDto.birthDate( customerEntity.getBirthDate() );
+        customerFilterDto.email( customerEntity.getEmail() );
+        customerFilterDto.cif( customerEntity.getCif() );
+        customerFilterDto.phoneNumber( customerEntity.getPhoneNumber() );
+
+        return customerFilterDto.build();
     }
 
     private XMLGregorianCalendar localDateToXmlGregorianCalendar( LocalDate localDate ) {

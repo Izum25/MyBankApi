@@ -1,13 +1,18 @@
 package com.example.mybankapplication.service;
 
-import com.example.mybankapplication.dao.CustomerEntity;
-import com.example.mybankapplication.dao.repository.CustomerRepository;
+import com.example.mybankapplication.entities.CustomerEntity;
 import com.example.mybankapplication.exception.DataAlreadyExistsException;
 import com.example.mybankapplication.exception.NotDataFoundException;
 import com.example.mybankapplication.mapper.CustomerMapper;
 import com.example.mybankapplication.model.customers.CustomerDto;
+import com.example.mybankapplication.model.customers.CustomerFilterDto;
+import com.example.mybankapplication.repository.CustomerRepository;
+import com.example.mybankapplication.specifications.CustomerSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,84 +25,15 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
 
-//    public Page<CustomerDto> searchCustomers(String firstName, String lastName, LocalDate birthDate, Pageable pageable) {
-//        Page<Customer> customerPage;
-//
-//        if (!firstName.isEmpty() && !lastName.isEmpty()) {
-//            customerPage = customerRepository.findByFirstNameContainingAndLastNameContainingAndBirthDateContaining(
-//                    firstName, lastName, birthDate, pageable);
-//        } else if (!birthDate.isEmpty()) {
-//            customerPage = customerRepository.findByBirthDateContaining(birthDate, pageable);
-//        } else {
-//            // Обработка случая, если нет фильтров
-//            return new PageImpl<>(Collections.emptyList(), pageable, 0);
-//        }
-//
-//        List<CustomerDto> customerDtoList = customerPage.getContent()
-//                .stream()
-//                .map(customer -> modelMapper.map(customer, CustomerDto.class))
-//                .collect(Collectors.toList());
-//
-//        return new PageImpl<>(customerDtoList, pageable, customerPage.getTotalElements());
-//    }
+    public Page<CustomerFilterDto> findCustomerByFilter(CustomerFilterDto filterDto, Pageable pageRequest) {
+        log.debug("Searching information about customer by {}", filterDto.toString());
 
-//    public List<CustomerDto> getCustomers(String firstName, String lastName) {
-//        log.info("Action.getLogCustomer start.");
-//        if (firstName == null && lastName == null) {
-//            List<CustomerEntity> customerEntities = (List<CustomerEntity>) customerRepository.findAll();
-//            log.info("Action.getLogCustomer end.");
-//            return customerEntities.stream().map(customerMapper::mapToDto)
-//                    .collect(Collectors.toList());
-//        } else {
-//            return getCustomersByName(firstName, lastName);
-//        }
-//    }
+        Specification<CustomerEntity> customerSpecification = CustomerSpecifications.getCustomerSpecification(filterDto);
+        Page<CustomerEntity> customerEntityPage = customerRepository.findAll(customerSpecification, pageRequest);
 
-//    public Page<CustomerDto> getCustomers(CustomerFilterDto customerFilterDto, Pageable pageable) {
-//
-//        var specifications = new CustomerSpecifications().getCustomerSpecification(customerFilterDto);
-//
-//
-//        Page<CustomerEntity> customerEntityPage = (Page<CustomerEntity>) customerRepository
-//                .findAll(specifications, pageable);
-//
-//        return customerEntityPage.map(customerMapper::mapToDto);
-//    }
-//
-//    public List<CustomerDto> getCustomersByName(String firstName, String lastName) {
-//        log.info("Action.getCustomerByName start");
-//        List<CustomerEntity> customerEntities;
-//
-//        if (firstName == null) customerEntities = customerRepository.findByLastName(lastName);
-//        else if (lastName == null) customerEntities = customerRepository.findByFirstName(firstName);
-//        else customerEntities = customerRepository.findByFirstNameAndLastName(firstName, lastName);
-//
-//        if (customerEntities.isEmpty()) {
-//            log.error("Customer " + firstName + " " + lastName + " not found.");
-//            throw new RuntimeException("Customer " + firstName + " " + lastName + " not found.");
-//        } else {
-//            log.info("Action.getCustomerByName end");
-//            return customerEntities.stream().map(customerMapper::mapToDto)
-//                    .collect(Collectors.toList());
-//        }
-//    }
-//
-//    public CustomerDto getCustomerById(Long customerId) {
-//        log.info("Action.getCustomer start.");
-//        CustomerEntity customerEntity = customerRepository.findById(customerId)
-//                .orElseThrow(() -> {
-//                    log.error("Customer not found with id {}", customerId);
-//                    return new NotFoundException("Customer not found with id " + customerId);
-//                });
-//        return customerMapper.mapToDto(customerEntity);
-//    }
-
-//    public void addCustomer(CustomerDto addCustomerDto) {
-//        log.info("Action.addCustomer start.");
-//        customerRepository.save(
-//                customerMapper.mapToEntity(addCustomerDto));
-//        log.info("Action.addCustomer end.");
-//    }
+        log.info("Successfully search customer");
+        return customerEntityPage.map(customerMapper::mapToFilterDto);
+    }
 
     protected boolean verifyId(Long id) throws NotDataFoundException {
         log.debug("Verifying customer by ID: {}", id);
@@ -107,6 +43,26 @@ public class CustomerService {
         }
         return true;
     }
+
+//    public Page<CustomerFilterDto> findCustomersByFilter(CustomerFilterDto filterDto, Pageable pageable) {
+//        log.debug("Searching information about customer by {}", filterDto.toString());
+//        Page<CustomerEntity> customerPage = customerRepository.findAll(
+//                Example.of(
+//                        CustomerEntity.builder()
+//                                .firstName(filterDto.getFirstName())
+//                                .lastName(filterDto.getLastName())
+//                                .birthDate(filterDto.getBirthDate())
+//                                .email(filterDto.getEmail())
+//                                .phoneNumber(filterDto.getPhoneNumber())
+//                                .cif(filterDto.getCif())
+//                                .build()
+//                ),
+//                pageable
+//        );
+//        Page<CustomerFilterDto> customerFilterDtoPage = customerPage.map(customerMapper::mapToFilterDto);
+//        log.info("Successfully search customer");
+//        return customerFilterDtoPage;
+//    }
 
     public List<CustomerDto> getAllCustomer() {
         log.debug("Retrieving information about all customers");
@@ -148,7 +104,7 @@ public class CustomerService {
 
     public void addCustomerDto(CustomerDto customer) {
         log.debug("Adding customer: {}", customer);
-        if (verifyId(customer.getId())){
+        if (verifyId(customer.getId())) {
             log.error("Customer with ID {} is already exists", customer.getId());
             throw new DataAlreadyExistsException("Customer with ID is already exists");
         }

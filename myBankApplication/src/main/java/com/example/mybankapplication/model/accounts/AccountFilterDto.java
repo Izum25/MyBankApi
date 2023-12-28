@@ -1,9 +1,9 @@
 package com.example.mybankapplication.model.accounts;
 
-import com.example.mybankapplication.entities.CustomerEntity;
 import com.example.mybankapplication.enumeration.AccountStatus;
 import com.example.mybankapplication.enumeration.AccountType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +12,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class AccountDto {
-    private Long id;
+@NoArgsConstructor
+@Builder
+public class AccountFilterDto {
     private String branchCode;
     private String accountNumber;
     private LocalDate accountOpenDate;
@@ -28,5 +28,4 @@ public class AccountDto {
     private BigDecimal availableBalance;
     private BigDecimal currentBalance;
     private BigDecimal blockedAmount;
-    private CustomerEntity customer;
 }

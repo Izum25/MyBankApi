@@ -1,7 +1,8 @@
 package com.example.mybankapplication.mapper;
 
-import com.example.mybankapplication.dao.AccountEntity;
+import com.example.mybankapplication.entities.AccountEntity;
 import com.example.mybankapplication.model.accounts.AccountDto;
+import com.example.mybankapplication.model.accounts.AccountFilterDto;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-12-27T13:24:34+0400",
+    date = "2023-12-29T00:32:51+0400",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.5.jar, environment: Java 17.0.7 (Oracle Corporation)"
 )
 @Component
@@ -82,6 +83,30 @@ public class AccountMapperImpl implements AccountMapper {
         accountEntity.setCustomer( accountDto.getCustomer() );
 
         return accountEntity;
+    }
+
+    @Override
+    public AccountFilterDto mapToFilterDto(AccountEntity accountEntity) {
+        if ( accountEntity == null ) {
+            return null;
+        }
+
+        AccountFilterDto.AccountFilterDtoBuilder accountFilterDto = AccountFilterDto.builder();
+
+        accountFilterDto.branchCode( accountEntity.getBranchCode() );
+        accountFilterDto.accountNumber( accountEntity.getAccountNumber() );
+        accountFilterDto.accountOpenDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( accountEntity.getAccountOpenDate() ) ) );
+        accountFilterDto.accountExpireDate( accountEntity.getAccountExpireDate() );
+        accountFilterDto.iban( accountEntity.getIban() );
+        accountFilterDto.swift( accountEntity.getSwift() );
+        accountFilterDto.currency( accountEntity.getCurrency() );
+        accountFilterDto.accountType( accountEntity.getAccountType() );
+        accountFilterDto.status( accountEntity.getStatus() );
+        accountFilterDto.availableBalance( accountEntity.getAvailableBalance() );
+        accountFilterDto.currentBalance( accountEntity.getCurrentBalance() );
+        accountFilterDto.blockedAmount( accountEntity.getBlockedAmount() );
+
+        return accountFilterDto.build();
     }
 
     private XMLGregorianCalendar localDateToXmlGregorianCalendar( LocalDate localDate ) {

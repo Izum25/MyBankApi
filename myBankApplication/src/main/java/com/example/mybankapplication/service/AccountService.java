@@ -1,14 +1,19 @@
 package com.example.mybankapplication.service;
 
-import com.example.mybankapplication.dao.AccountEntity;
-import com.example.mybankapplication.dao.repository.AccountRepository;
+import com.example.mybankapplication.entities.AccountEntity;
 import com.example.mybankapplication.exception.DataAlreadyExistsException;
 import com.example.mybankapplication.exception.NotDataFoundException;
 import com.example.mybankapplication.mapper.AccountMapper;
 import com.example.mybankapplication.mapper.CustomerMapper;
 import com.example.mybankapplication.model.accounts.AccountDto;
+import com.example.mybankapplication.model.accounts.AccountFilterDto;
+import com.example.mybankapplication.repository.AccountRepository;
+import com.example.mybankapplication.specifications.AccountSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +30,12 @@ public class AccountService {
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
 
+    public Page<AccountFilterDto> findAccountsByFilter(AccountFilterDto filterDto, Pageable pageRequest) {
+        Specification<AccountEntity> accountSpecification = AccountSpecifications.getAccountSpecification(filterDto);
+        Page<AccountEntity> accountEntityPage = accountRepository.findAll(accountSpecification, pageRequest);
+        return accountEntityPage.map(accountMapper::mapToFilterDto);
+    }
+
     protected boolean verifyId(Long id) throws NotDataFoundException {
         log.debug("Verifying account by ID: {}", id);
         if (!accountRepository.existsById(id)) {
@@ -33,8 +44,6 @@ public class AccountService {
         }
         return true;
     }
-
-    //verifyDataAlreadyExists
 
     public List<AccountDto> getAllAccounts() {
         log.debug("Retrieving all accounts");
@@ -82,7 +91,7 @@ public class AccountService {
         log.debug("Creating account for customer: {}", customerId);
         customerService.verifyId(customerId);
 
-        if(verifyId(customerId)){
+        if (verifyId(customerId)) {
             log.error("Account with ID {} is already exists", account.getId());
             throw new DataAlreadyExistsException("Account with ID is already exists");
         }
@@ -126,4 +135,18 @@ public class AccountService {
             }
         }
     }
+
+//    public Page<AccountFilterDto> findAccountByFilter(AccountFilterDto filterDto, PageRequest pageRequest) {
+//        Pageable pageable;
+//        if (!pageRequest.getSort().isEmpty()) {
+//            pageable = PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),
+//                    Sort.Direction.ASC, String.valueOf(pageRequest.getSort()));
+//        } else {
+//            pageable = PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize());
+//        }
+//        Page<AccountEntity> accountEntityPage = accountRepository.findAll(pageable);
+//        Page<AccountFilterDto> accountFilterDtoPage = accountEntityPage.map(accountMapper::mapToFilterDto);
+//        log.info("Successfully search customer by {}", pageRequest.getSort());
+//        return accountFilterDtoPage;
+//    }
 }
