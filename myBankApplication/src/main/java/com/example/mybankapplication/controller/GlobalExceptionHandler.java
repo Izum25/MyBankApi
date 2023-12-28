@@ -1,9 +1,9 @@
 package com.example.mybankapplication.controller;
 
-import com.example.mybankapplication.exception.DataAlreadyExistsException;
-import com.example.mybankapplication.exception.NotDataFoundException;
 import com.example.mybankapplication.error.ErrorDetails;
 import com.example.mybankapplication.error.ValidationError;
+import com.example.mybankapplication.exception.DataAlreadyExistsException;
+import com.example.mybankapplication.exception.NotDataFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,12 @@ import java.util.*;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
+
+//    public ResponseEntity<ErrorDetails> handleJpaSystemException(
+//            JpaSystemException ex, WebRequest webRequest){
+//        return new ResponseEntity<>(createErrorDetails(ex, webRequest, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+//    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorDetails> handleCustomerNotFoundException(
             NotDataFoundException ex, WebRequest webRequest) {

@@ -1,5 +1,5 @@
 // AccountEntity.java
-package com.example.mybankapplication.dao;
+package com.example.mybankapplication.entities;
 
 import com.example.mybankapplication.enumeration.AccountStatus;
 import com.example.mybankapplication.enumeration.AccountType;

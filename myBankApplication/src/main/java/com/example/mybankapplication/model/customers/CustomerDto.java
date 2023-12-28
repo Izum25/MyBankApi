@@ -18,6 +18,8 @@ public class CustomerDto {
     private String lastName;
     private LocalDate birthDate;
     private String email;
+    private String cif;
+    private String phoneNumber;
     private PassportDto passport;
     private List<AccountDto> accounts;
 }

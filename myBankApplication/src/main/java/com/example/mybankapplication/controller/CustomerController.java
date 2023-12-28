@@ -2,16 +2,20 @@ package com.example.mybankapplication.controller;
 
 import com.example.mybankapplication.model.accounts.AccountDto;
 import com.example.mybankapplication.model.customers.CustomerDto;
+import com.example.mybankapplication.model.customers.CustomerFilterDto;
 import com.example.mybankapplication.service.AccountService;
 import com.example.mybankapplication.service.CustomerService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,40 +25,35 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private AccountService accountService;
+    private final AccountService accountService;
 
-//    @GetMapping
-//    public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName,
-//                                          @RequestParam(required = false) String lastName) {
-//        return customerService.getCustomers(firstName, lastName);
-//    }
+    @GetMapping("/search")
+    public ResponseEntity<Page<CustomerFilterDto>> getCustomersByFilter(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) LocalDate birthDate,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String cif,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-//    @GetMapping("/{customerId}")
-//    public CustomerDto getCustomerById(@PathVariable Long customerId) {
-//        return customerService.getCustomerById(customerId);
-//    }
-//
-//    @PostMapping
-//    public void addCustomer(@RequestBody CustomerDto addCustomerDto) {
-//        customerService.addCustomer(addCustomerDto);
-//    }
-//
-//    @PutMapping("/{customerId}")
-//    public void updateCustomer(
-//            @PathVariable Long customerId,
-//            @RequestBody CustomerDto updateCustomerDto) {
-//        customerService.updateCustomer(customerId, updateCustomerDto);
-//    }
-//
-//    @DeleteMapping("/{customerId}")
-//    public void deleteCustomer(@PathVariable Long customerId) {
-//        customerService.deleteCustomer(customerId);
-//    }
+        log.info("Received GET request for searching customer");
+        CustomerFilterDto filterDto = CustomerFilterDto.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .birthDate(birthDate)
+                .email(email)
+                .cif(cif)
+                .phoneNumber(phoneNumber)
+                .build();
 
-//    @GetMapping
-//    public Page<CustomerDto> getCustomers(CustomerFilterDto customerFilterDto, Pageable pageable){
-//        return customerService.getCustomers(customerFilterDto, pageable);
-//    }
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortOrder), sortBy));
+        Page<CustomerFilterDto> customerPage = customerService.findCustomerByFilter(filterDto, pageRequest);
+        return ResponseEntity.ok(customerPage);
+    }
 
     @PostMapping
     public ResponseEntity<?> addCustomer(@Validated @RequestBody CustomerDto customer) {
