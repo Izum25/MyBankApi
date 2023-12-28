@@ -25,7 +25,7 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @GetMapping("/search")
     public ResponseEntity<Page<CustomerFilterDto>> getCustomersByFilter(
