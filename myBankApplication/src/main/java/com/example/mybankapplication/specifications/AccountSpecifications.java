@@ -1,7 +1,7 @@
 package com.example.mybankapplication.specifications;
 
 import com.example.mybankapplication.entities.AccountEntity;
-import com.example.mybankapplication.model.accounts.AccountFilterDto;
+import com.example.mybankapplication.model.accounts.AccountRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -87,19 +87,19 @@ public class AccountSpecifications {
                         null : criteriaBuilder.equal(root.get(attribute), value);
     }
 
-    public static Specification<AccountEntity> getAccountSpecification(AccountFilterDto accountFilterDto) {
+    public static Specification<AccountEntity> getAccountSpecification(AccountRequest accountRequest) {
         return Specification.<AccountEntity>where(
-                        likeIgnoreCase("branchCode", accountFilterDto.getBranchCode()))
-                .and(likeIgnoreCase("accountNumber", accountFilterDto.getAccountNumber()))
-                .and(equal("accountOpenDate", accountFilterDto.getAccountOpenDate()))
-                .and(equal("accountExpireDate", accountFilterDto.getAccountExpireDate()))
-                .and(likeIgnoreCase("iban", accountFilterDto.getIban()))
-                .and(likeIgnoreCase("swift", accountFilterDto.getSwift()))
-                .and(likeIgnoreCase("currency", accountFilterDto.getCurrency()))
-                .and(equal("accountType", accountFilterDto.getAccountType()))
-                .and(equal("status", accountFilterDto.getStatus()))
-                .and(equal("availableBalance", accountFilterDto.getAvailableBalance()))
-                .and(equal("currentBalance", accountFilterDto.getCurrentBalance()))
-                .and(equal("blockedAmount", accountFilterDto.getBlockedAmount()));
+                        likeIgnoreCase("branchCode", accountRequest.getBranchCode()))
+                .and(likeIgnoreCase("accountNumber", accountRequest.getAccountNumber()))
+                .and(equal("accountOpenDate", accountRequest.getAccountOpenDate()))
+                .and(equal("accountExpireDate", accountRequest.getAccountExpireDate()))
+                .and(likeIgnoreCase("iban", accountRequest.getIban()))
+                .and(likeIgnoreCase("swift", accountRequest.getSwift()))
+                .and(likeIgnoreCase("currency", accountRequest.getCurrency()))
+                .and(equal("accountType", accountRequest.getAccountType()))
+                .and(equal("status", accountRequest.getStatus()))
+                .and(equal("availableBalance", accountRequest.getAvailableBalance()))
+                .and(equal("currentBalance", accountRequest.getCurrentBalance()))
+                .and(equal("blockedAmount", accountRequest.getBlockedAmount()));
     }
 }

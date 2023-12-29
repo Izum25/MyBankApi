@@ -18,6 +18,7 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String branchCode;
+    @Column(unique = true)
     private String accountNumber;
     private LocalDateTime accountOpenDate;
     private LocalDateTime accountExpireDate;
@@ -34,6 +35,7 @@ public class AccountEntity {
     private BigDecimal currentBalance;
     @Column(name = "blocked_amount", columnDefinition = "NUMERIC(38,2) USING blocked_amount::numeric(38,2)")
     private BigDecimal blockedAmount;
+    private String pin;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

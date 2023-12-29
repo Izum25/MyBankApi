@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AccountFilterDto {
+public class AccountResponse {
+    private Long id;
     private String branchCode;
     private String accountNumber;
     private LocalDate accountOpenDate;
@@ -28,4 +28,7 @@ public class AccountFilterDto {
     private BigDecimal availableBalance;
     private BigDecimal currentBalance;
     private BigDecimal blockedAmount;
+    private String pin;
+    private Long customerId;
+
 }

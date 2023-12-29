@@ -1,8 +1,8 @@
 package com.example.mybankapplication.mapper;
 
 import com.example.mybankapplication.entities.AccountEntity;
-import com.example.mybankapplication.model.accounts.AccountDto;
-import com.example.mybankapplication.model.accounts.AccountFilterDto;
+import com.example.mybankapplication.model.accounts.AccountRequest;
+import com.example.mybankapplication.model.accounts.AccountResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-12-29T00:32:51+0400",
+    date = "2023-12-30T00:32:10+0400",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.5.jar, environment: Java 17.0.7 (Oracle Corporation)"
 )
 @Component
@@ -34,79 +34,55 @@ public class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
-    public AccountDto mapToDto(AccountEntity accountEntity) {
+    public AccountResponse toDto(AccountEntity accountEntity) {
         if ( accountEntity == null ) {
             return null;
         }
 
-        AccountDto accountDto = new AccountDto();
+        AccountResponse.AccountResponseBuilder accountResponse = AccountResponse.builder();
 
-        accountDto.setId( accountEntity.getId() );
-        accountDto.setBranchCode( accountEntity.getBranchCode() );
-        accountDto.setAccountNumber( accountEntity.getAccountNumber() );
-        accountDto.setAccountOpenDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( accountEntity.getAccountOpenDate() ) ) );
-        accountDto.setAccountExpireDate( accountEntity.getAccountExpireDate() );
-        accountDto.setIban( accountEntity.getIban() );
-        accountDto.setSwift( accountEntity.getSwift() );
-        accountDto.setCurrency( accountEntity.getCurrency() );
-        accountDto.setAccountType( accountEntity.getAccountType() );
-        accountDto.setStatus( accountEntity.getStatus() );
-        accountDto.setAvailableBalance( accountEntity.getAvailableBalance() );
-        accountDto.setCurrentBalance( accountEntity.getCurrentBalance() );
-        accountDto.setBlockedAmount( accountEntity.getBlockedAmount() );
-        accountDto.setCustomer( accountEntity.getCustomer() );
+        accountResponse.id( accountEntity.getId() );
+        accountResponse.branchCode( accountEntity.getBranchCode() );
+        accountResponse.accountNumber( accountEntity.getAccountNumber() );
+        accountResponse.accountOpenDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( accountEntity.getAccountOpenDate() ) ) );
+        accountResponse.accountExpireDate( accountEntity.getAccountExpireDate() );
+        accountResponse.iban( accountEntity.getIban() );
+        accountResponse.swift( accountEntity.getSwift() );
+        accountResponse.currency( accountEntity.getCurrency() );
+        accountResponse.accountType( accountEntity.getAccountType() );
+        accountResponse.status( accountEntity.getStatus() );
+        accountResponse.availableBalance( accountEntity.getAvailableBalance() );
+        accountResponse.currentBalance( accountEntity.getCurrentBalance() );
+        accountResponse.blockedAmount( accountEntity.getBlockedAmount() );
+        accountResponse.pin( accountEntity.getPin() );
 
-        return accountDto;
+        return accountResponse.build();
     }
 
     @Override
-    public AccountEntity mapToEntity(AccountDto accountDto) {
-        if ( accountDto == null ) {
+    public AccountEntity fromDto(AccountRequest accountRequest) {
+        if ( accountRequest == null ) {
             return null;
         }
 
         AccountEntity accountEntity = new AccountEntity();
 
-        accountEntity.setId( accountDto.getId() );
-        accountEntity.setBranchCode( accountDto.getBranchCode() );
-        accountEntity.setAccountNumber( accountDto.getAccountNumber() );
-        accountEntity.setAccountOpenDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( accountDto.getAccountOpenDate() ) ) );
-        accountEntity.setAccountExpireDate( accountDto.getAccountExpireDate() );
-        accountEntity.setIban( accountDto.getIban() );
-        accountEntity.setSwift( accountDto.getSwift() );
-        accountEntity.setCurrency( accountDto.getCurrency() );
-        accountEntity.setAccountType( accountDto.getAccountType() );
-        accountEntity.setStatus( accountDto.getStatus() );
-        accountEntity.setAvailableBalance( accountDto.getAvailableBalance() );
-        accountEntity.setCurrentBalance( accountDto.getCurrentBalance() );
-        accountEntity.setBlockedAmount( accountDto.getBlockedAmount() );
-        accountEntity.setCustomer( accountDto.getCustomer() );
+        accountEntity.setId( accountRequest.getId() );
+        accountEntity.setBranchCode( accountRequest.getBranchCode() );
+        accountEntity.setAccountNumber( accountRequest.getAccountNumber() );
+        accountEntity.setAccountOpenDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( accountRequest.getAccountOpenDate() ) ) );
+        accountEntity.setAccountExpireDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( accountRequest.getAccountExpireDate() ) ) );
+        accountEntity.setIban( accountRequest.getIban() );
+        accountEntity.setSwift( accountRequest.getSwift() );
+        accountEntity.setCurrency( accountRequest.getCurrency() );
+        accountEntity.setAccountType( accountRequest.getAccountType() );
+        accountEntity.setStatus( accountRequest.getStatus() );
+        accountEntity.setAvailableBalance( accountRequest.getAvailableBalance() );
+        accountEntity.setCurrentBalance( accountRequest.getCurrentBalance() );
+        accountEntity.setBlockedAmount( accountRequest.getBlockedAmount() );
+        accountEntity.setPin( accountRequest.getPin() );
 
         return accountEntity;
-    }
-
-    @Override
-    public AccountFilterDto mapToFilterDto(AccountEntity accountEntity) {
-        if ( accountEntity == null ) {
-            return null;
-        }
-
-        AccountFilterDto.AccountFilterDtoBuilder accountFilterDto = AccountFilterDto.builder();
-
-        accountFilterDto.branchCode( accountEntity.getBranchCode() );
-        accountFilterDto.accountNumber( accountEntity.getAccountNumber() );
-        accountFilterDto.accountOpenDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( accountEntity.getAccountOpenDate() ) ) );
-        accountFilterDto.accountExpireDate( accountEntity.getAccountExpireDate() );
-        accountFilterDto.iban( accountEntity.getIban() );
-        accountFilterDto.swift( accountEntity.getSwift() );
-        accountFilterDto.currency( accountEntity.getCurrency() );
-        accountFilterDto.accountType( accountEntity.getAccountType() );
-        accountFilterDto.status( accountEntity.getStatus() );
-        accountFilterDto.availableBalance( accountEntity.getAvailableBalance() );
-        accountFilterDto.currentBalance( accountEntity.getCurrentBalance() );
-        accountFilterDto.blockedAmount( accountEntity.getBlockedAmount() );
-
-        return accountFilterDto.build();
     }
 
     private XMLGregorianCalendar localDateToXmlGregorianCalendar( LocalDate localDate ) {

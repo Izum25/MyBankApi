@@ -1,7 +1,7 @@
 package com.example.mybankapplication.specifications;
 
 import com.example.mybankapplication.entities.CustomerEntity;
-import com.example.mybankapplication.model.customers.CustomerFilterDto;
+import com.example.mybankapplication.model.customers.CustomerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class CustomerSpecifications {
                         null : criteriaBuilder.equal(root.get(attribute), value);
     }
 
-    public static Specification<CustomerEntity> getCustomerSpecification(CustomerFilterDto customerFilterDto) {
+    public static Specification<CustomerEntity> getCustomerSpecification(CustomerRequest customerFilterDto) {
         log.info("Get specification for customer {}", customerFilterDto.toString()); //debug
         return Specification.<CustomerEntity>where(
                 likeIgnoreCase("firstName", customerFilterDto.getFirstName()))
