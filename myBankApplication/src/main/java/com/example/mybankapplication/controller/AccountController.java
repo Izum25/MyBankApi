@@ -2,8 +2,8 @@ package com.example.mybankapplication.controller;
 
 import com.example.mybankapplication.enumeration.AccountStatus;
 import com.example.mybankapplication.enumeration.AccountType;
-import com.example.mybankapplication.model.accounts.AccountDto;
-import com.example.mybankapplication.model.accounts.AccountFilterDto;
+import com.example.mybankapplication.model.accounts.AccountRequest;
+import com.example.mybankapplication.model.accounts.AccountResponse;
 import com.example.mybankapplication.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,11 +27,11 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<AccountFilterDto>> getAccountByFilter(
+    public ResponseEntity<Page<AccountResponse>> getAccountByFilter(
             @RequestParam(required = false) String branchCode,
             @RequestParam(required = false) String accountNumber,
             @RequestParam(required = false) LocalDate accountOpenDate,
-            @RequestParam(required = false) LocalDateTime accountExpireDate,
+            @RequestParam(required = false) LocalDate accountExpireDate,
             @RequestParam(required = false) String iban,
             @RequestParam(required = false) String swift,
             @RequestParam(required = false) String currency,
@@ -49,7 +48,7 @@ public class AccountController {
         log.info("Received GET request for searching accounts");
 
         // Create the filter DTO
-        AccountFilterDto filterDto = AccountFilterDto.builder()
+        AccountRequest accountRequest = AccountRequest.builder()
                 .branchCode(branchCode)
                 .accountNumber(accountNumber)
                 .accountOpenDate(accountOpenDate)
@@ -68,26 +67,26 @@ public class AccountController {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortOrder), sortBy));
 
         // Retrieve the paginated results using the service
-        Page<AccountFilterDto> accountPage = accountService.findAccountsByFilter(filterDto, pageRequest);
+        Page<AccountResponse> accountPage = accountService.findAccountsByFilter(accountRequest, pageRequest);
 
         // Return the paginated results along with HTTP status
         return ResponseEntity.ok(accountPage);
     }
 
     @GetMapping()
-    public ResponseEntity<List<AccountDto>> getAllAccounts() {
+    public ResponseEntity<List<AccountResponse>> getAllAccounts() {
         log.info("Received GET request for getting all accounts");
         return new ResponseEntity<>(accountService.getAllAccounts(), HttpStatus.OK);
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<AccountDto> getAccountById(@PathVariable Long accountId) {
+    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long accountId) {
         log.info("Received GET request for getting account by ID: {}", accountId);
         return new ResponseEntity<>(accountService.getAccountById(accountId), HttpStatus.OK);
     }
 
     @PutMapping("/{accountId}")
-    public ResponseEntity<?> updateAccount(@RequestBody AccountDto account, @PathVariable Long accountId) {
+    public ResponseEntity<?> updateAccount(@RequestBody AccountRequest account, @PathVariable Long accountId) {
         log.info("Received UPDATE request for update account by ID: {}", accountId);
         accountService.updateAccount(account, accountId);
         return new ResponseEntity<>(HttpStatus.OK);

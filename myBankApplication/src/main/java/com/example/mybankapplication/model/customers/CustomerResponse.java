@@ -1,7 +1,7 @@
 package com.example.mybankapplication.model.customers;
 
 import com.example.mybankapplication.model.PassportDto;
-import com.example.mybankapplication.model.accounts.AccountDto;
+import com.example.mybankapplication.model.accounts.AccountResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CustomerDto {
+public class CustomerResponse {
     private Long id;
     private String firstName;
     private String lastName;
@@ -21,5 +21,5 @@ public class CustomerDto {
     private String cif;
     private String phoneNumber;
     private PassportDto passport;
-    private List<AccountDto> accounts;
+    private List<AccountResponse> accounts;
 }

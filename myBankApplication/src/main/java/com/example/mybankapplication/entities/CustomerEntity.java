@@ -29,16 +29,16 @@ public class CustomerEntity {
     private String lastName;
     @Column(name = "birth_date")
     private LocalDate birthDate;
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     private String cif;
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customer")
     @JsonBackReference
     private PassportEntity passport;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference
     List<AccountEntity> accounts;
 }
